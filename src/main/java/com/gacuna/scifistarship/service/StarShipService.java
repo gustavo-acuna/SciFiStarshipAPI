@@ -1,20 +1,20 @@
 package com.gacuna.scifistarship.service;
 
-import com.gacuna.scifistarship.dto.MovieSeriesDto;
 import com.gacuna.scifistarship.dto.StarShipDto;
 import com.gacuna.scifistarship.exception.FunctionalException;
 import com.gacuna.scifistarship.mapper.StarShipMapper;
 import com.gacuna.scifistarship.model.MovieSeriesEntity;
 import com.gacuna.scifistarship.model.StarShipEntity;
-import com.gacuna.scifistarship.repository.MovieSeriesRepository;
 import com.gacuna.scifistarship.repository.StarShipRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,19 +24,17 @@ public class StarShipService {
 
     private final MovieSeriesService movieSeriesService;
 
-    public List<StarShipDto> getAllStarShips() {
-        return starShipRepository.findAll()
-                .stream()
-                .map(StarShipMapper::map)
-                .collect(Collectors.toList());
+
+    public Page<StarShipDto> getAllStarShips(Pageable pageRequest) {
+        return starShipRepository.findAll(pageRequest)
+                .map(StarShipMapper::map);
     }
 
+    @Cacheable("starShipsById")
     public StarShipDto getStarShipById(Long id) {
         return starShipRepository.findById(id)
                 .map(StarShipMapper::map)
                 .orElseThrow(() -> new FunctionalException("Starship not found with id: " + id));
-
-
     }
 
     public StarShipDto createStarShip(StarShipDto starShip) {
@@ -60,8 +58,15 @@ public class StarShipService {
     }
 
 
-
     public void deleteStarShip(Long id) {
         starShipRepository.deleteById(id);
+    }
+
+    @Cacheable("starShipsByNameSearch")
+    public List<StarShipDto> searchStarShipsByNameContaining(String name) {
+        return starShipRepository.findByNameContainingOrderByNameAsc(name)
+                .stream()
+                .map(StarShipMapper::map)
+                .toList();
     }
 }

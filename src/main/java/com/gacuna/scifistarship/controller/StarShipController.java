@@ -3,7 +3,8 @@ package com.gacuna.scifistarship.controller;
 import com.gacuna.scifistarship.dto.StarShipDto;
 import com.gacuna.scifistarship.service.StarShipService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/starships")
+@RequestMapping("/api/v0/starships")
 @RequiredArgsConstructor
 public class StarShipController {
 
@@ -19,8 +20,8 @@ public class StarShipController {
     private final StarShipService starShipService;
 
     @GetMapping
-    public ResponseEntity<List<StarShipDto>> getAllStarShips() {
-        List<StarShipDto> starShips = starShipService.getAllStarShips();
+    public ResponseEntity<Page<StarShipDto>> getAllStarShips(Pageable pageRequest) {
+        Page<StarShipDto> starShips = starShipService.getAllStarShips(pageRequest);
         return new ResponseEntity<>(starShips, HttpStatus.OK);
     }
 
@@ -46,5 +47,11 @@ public class StarShipController {
     public ResponseEntity<Void> deleteStarShip(@PathVariable Long id) {
         starShipService.deleteStarShip(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<StarShipDto>> searchStarShipsByNameContaining(@RequestParam String name) {
+        List<StarShipDto> starShips = starShipService.searchStarShipsByNameContaining(name);
+        return ResponseEntity.ok(starShips);
     }
 }

@@ -1,0 +1,16 @@
+spring:
+  # Configuración de PostgreSQL
+  datasource:
+    url: jdbc:postgresql://postgres:5432/SciFiStarship
+    username: SciFiStarship
+    password: SciFiStarship
+    driver-class-name: org.postgresql.Driver
+  # Configuración de Redis
+  cache:
+    type: redis
+    redis:
+      time-to-live: 30000
+  data:
+    redis:
+      host: redis
+      port: 6379

@@ -4,9 +4,6 @@ import com.gacuna.scifistarship.dto.MovieSeriesDto;
 import com.gacuna.scifistarship.model.MovieSeriesEntity;
 
 import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MovieSeriesMapper {
     private MovieSeriesMapper() {
