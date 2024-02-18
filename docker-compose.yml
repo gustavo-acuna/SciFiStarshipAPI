@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: SciFiStarship
+      POSTGRES_PASSWORD: SciFiStarship
+      POSTGRES_DB: SciFiStarship
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass SciFiStarship
+
+volumes:
+  postgres_data:
